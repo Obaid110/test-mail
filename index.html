@@ -1,0 +1,39 @@
+<form id="contactForm">
+  <input type="text" id="name" placeholder="Your Name" required>
+  <input type="email" id="email" placeholder="Your Email" required>
+  <textarea id="message" placeholder="Message" required></textarea>
+  <button type="submit">Send</button>
+  <p id="status"></p>
+</form>
+
+<style>
+  form { max-width: 350px; margin: 40px auto; display: grid; gap: 10px; }
+  input, textarea, button { padding: 12px; border-radius: 8px; border: 1px solid #ccc; }
+  button { background: #007f42; color: white; cursor: pointer; }
+</style>
+
+<script>
+document.getElementById("contactForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const message = document.getElementById("message").value;
+
+  const res = await fetch("https://mailtree.vercel.app/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "YOUR_API_KEY"
+    },
+    body: JSON.stringify({
+      to: "motech508@gmail.com",
+      subject: "New Contact Form Message",
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("status").innerText = data.message;
+});
+</script>
