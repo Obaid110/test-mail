@@ -24,7 +24,6 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": "96a921c4a80e1801f4de8c1abae03ffe462fec4db0d954cdd6c10ea7ba85fc66"
     },
     body: JSON.stringify({
       to: "motech508@gmail.com",
@@ -33,7 +32,8 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
     })
   });
 
-  const data = await res.json();
-  document.getElementById("status").innerText = data.message;
+  const text = await res.text(); // 👈 safe
+
+  document.getElementById("status").innerText = text;
 });
 </script>
