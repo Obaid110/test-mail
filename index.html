@@ -20,7 +20,7 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value;
   const message = document.getElementById("message").value;
 
-  const res = await fetch("https://zany-parakeet-x5wvpv45rvgxh65x7-3000.app.github.dev/send", {
+  const res = await fetch("https://mailtree.vercel.app/send", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
