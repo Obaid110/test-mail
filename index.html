@@ -31,7 +31,7 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
     })
   });
-
+  
   const text = await res.text(); // 👈 safe
 
   document.getElementById("status").innerText = text;
