@@ -1,41 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mailtree Test</title>
+</head>
+<body>
+
+<h2>Send Email Request</h2>
+
+<form id="apiTestForm">
+  <input type="text" id="msg" placeholder="Type message..." required />
+  <button type="submit">Send</button>
+</form>
+
+<div id="responseMessage" style="margin-top:10px;font-weight:bold;"></div>
+
 <script>
-document.getElementById('apiTestForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.getElementById('apiTestForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    const responseBox = document.getElementById('responseMessage');
-    const messageInput = document.getElementById('msg').value;
+  const msg = document.getElementById('msg').value;
+  const box = document.getElementById('responseMessage');
 
-    responseBox.style.color = 'black';
-    responseBox.textContent = 'Sending request to Mailtree...';
+  box.textContent = "Sending...";
 
-    // ✅ Correct backend URL
-    const backendApiUrl = 'https://mailtree.vercel.app/send';
-
-    fetch(backendApiUrl, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            message: messageInput
-        })
-    })
-    .then(async (response) => {
-        const data = await response.json();
-
-        if (response.ok) {
-            responseBox.style.color = 'green';
-            responseBox.textContent = data.message || 'Sent successfully';
-        } else {
-            responseBox.style.color = 'red';
-            responseBox.textContent = data.error || 'Request failed';
-        }
-    })
-    .catch((error) => {
-        console.error('Fetch Error:', error);
-        responseBox.style.color = 'red';
-        responseBox.textContent = 'Server connection failed.';
+  try {
+    const res = await fetch("https://mailtree.vercel.app/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message: msg })
     });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      box.style.color = "green";
+      box.textContent = data.message;
+    } else {
+      box.style.color = "red";
+      box.textContent = data.error || "Failed";
+    }
+
+  } catch (err) {
+    box.style.color = "red";
+    box.textContent = "Server not reachable";
+  }
 });
 </script>
+
+</body>
+</html>
