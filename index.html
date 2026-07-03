@@ -26,7 +26,7 @@ document.getElementById('apiTestForm').addEventListener('submit', async (e) => {
   box.textContent = "Sending...";
 
   try {
-    const res = await fetch("https://mailtree.vercel.app/api/send", {
+    const res = await fetch("https://mailtree.vercel.app/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
