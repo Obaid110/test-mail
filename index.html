@@ -1,65 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mailtree Client Test Form</title>
-</head>
-<body>
+<script>
+document.getElementById('apiTestForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-    <h2>Send Form Request</h2>
-    
-    <!-- Test Form -->
-    <form id="apiTestForm">
-        <label for="msg">Message:</label>
-        <input type="text" id="msg" name="message" required placeholder="Type your email content...">
-        <button type="submit">Submit Request</button>
-    </form>
+    const responseBox = document.getElementById('responseMessage');
+    const messageInput = document.getElementById('msg').value;
 
-    <!-- UI Response Output Box -->
-    <div id="responseMessage" style="margin-top: 15px; font-weight: bold;"></div>
+    responseBox.style.color = 'black';
+    responseBox.textContent = 'Sending request to Mailtree...';
 
-    <script>
-        document.getElementById('apiTestForm').addEventListener('submit', function(event) {
-            // Stop page refresh
-            event.preventDefault();
+    // ✅ Correct backend URL
+    const backendApiUrl = 'https://mailtree.vercel.app/send';
 
-            const responseBox = document.getElementById('responseMessage');
-            const messageInput = document.getElementById('msg').value; 
+    fetch(backendApiUrl, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: messageInput
+        })
+    })
+    .then(async (response) => {
+        const data = await response.json();
 
-            responseBox.style.color = 'black';
-            responseBox.textContent = 'Verifying domain and sending email via Mailtree...';
-
-            // Pointing to your specific live Vercel production domain
-            const backendApiUrl = 'https://vercel.app';
-
-            fetch(backendApiUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                // Pass the message payload down to the server
-                body: JSON.stringify({ message: messageInput }) 
-            })
-            .then(async (response) => {
-                const data = await response.json();
-                
-                if (response.ok) {
-                    responseBox.style.color = 'green';
-                    responseBox.textContent = data.message;
-                } else {
-                    responseBox.style.color = 'red';
-                    responseBox.textContent = data.error || 'Authorization / Delivery failed.';
-                }
-            })
-            .catch((error) => {
-                console.error('Fetch Error:', error);
-                responseBox.style.color = 'red';
-                responseBox.textContent = 'Could not connect to Mailtree server.';
-            });
-        });
-    </script>
-
-</body>
-</html>
+        if (response.ok) {
+            responseBox.style.color = 'green';
+            responseBox.textContent = data.message || 'Sent successfully';
+        } else {
+            responseBox.style.color = 'red';
+            responseBox.textContent = data.error || 'Request failed';
+        }
+    })
+    .catch((error) => {
+        console.error('Fetch Error:', error);
+        responseBox.style.color = 'red';
+        responseBox.textContent = 'Server connection failed.';
+    });
+});
+</script>
