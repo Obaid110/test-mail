@@ -1,39 +1,63 @@
-<form id="contactForm">
-  <input type="text" id="name" placeholder="Your Name" required>
-  <input type="email" id="email" placeholder="Your Email" required>
-  <textarea id="message" placeholder="Message" required></textarea>
-  <button type="submit">Send</button>
-  <p id="status"></p>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Client Website</title>
+</head>
+<body>
 
-<style>
-  form { max-width: 350px; margin: 40px auto; display: grid; gap: 10px; }
-  input, textarea, button { padding: 12px; border-radius: 8px; border: 1px solid #ccc; }
-  button { background: #007f42; color: white; cursor: pointer; }
-</style>
+    <h2>Send Form Request</h2>
+    
+    <!-- A simple test form -->
+    <form id="apiTestForm">
+        <label for="msg">Message:</label>
+        <input type="text" id="msg" name="message" required placeholder="Type something...">
+        <button type="submit">Submit Request</button>
+    </form>
 
-<script>
-document.getElementById("contactForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    <!-- Response Message Box -->
+    <div id="responseMessage" style="margin-top: 15px; font-weight: bold;"></div>
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const message = document.getElementById("message").value;
+    <script>
+        document.getElementById('apiTestForm').addEventListener('submit', function(event) {
+            // Prevent the default HTML form page refresh
+            event.preventDefault();
 
-  const res = await fetch("https://mailtree.vercel.app/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      to: "motech508@gmail.com",
-      subject: "New Contact Form Message",
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
-    })
-  });
-  
-  const text = await res.text(); // 👈 safe
+            const responseBox = document.getElementById('responseMessage');
+            responseBox.style.color = 'black';
+            responseBox.textContent = 'Checking domain authorization...';
 
-  document.getElementById("status").innerText = text;
-});
-</script>
+            // REPLACE THIS URL with your actual backend server address (e.g., 'https://onrender.com')
+            const backendApiUrl = 'http://localhost:3000/send';
+
+            // Send the request to your Express server
+            fetch(backendApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // Sending an empty body because the server reads the domain from headers
+                body: JSON.stringify({}) 
+            })
+            .then(async (response) => {
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseBox.style.color = 'green';
+                    responseBox.textContent = data.message;
+                } else {
+                    responseBox.style.color = 'red';
+                    responseBox.textContent = data.error || 'Authorization failed.';
+                }
+            })
+            .catch((error) => {
+                console.error('Fetch Error:', error);
+                responseBox.style.color = 'red';
+                responseBox.textContent = 'Could not connect to the backend server.';
+            });
+        });
+    </script>
+
+</body>
+</html>
