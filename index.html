@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>External Client Website</title>
+    <title>Mailtree Client Test Form</title>
 </head>
 <body>
 
     <h2>Send Form Request</h2>
     
-    <!-- A simple test form -->
+    <!-- Test Form -->
     <form id="apiTestForm">
         <label for="msg">Message:</label>
-        <input type="text" id="msg" name="message" required placeholder="Type something...">
+        <input type="text" id="msg" name="message" required placeholder="Type your email content...">
         <button type="submit">Submit Request</button>
     </form>
 
-    <!-- Response Message Box -->
+    <!-- UI Response Output Box -->
     <div id="responseMessage" style="margin-top: 15px; font-weight: bold;"></div>
 
     <script>
         document.getElementById('apiTestForm').addEventListener('submit', function(event) {
-            // Prevent the default HTML form page refresh
+            // Stop page refresh
             event.preventDefault();
 
             const responseBox = document.getElementById('responseMessage');
+            const messageInput = document.getElementById('msg').value; 
+
             responseBox.style.color = 'black';
-            responseBox.textContent = 'Checking domain authorization...';
+            responseBox.textContent = 'Verifying domain and sending email via Mailtree...';
 
-            // REPLACE THIS URL with your actual backend server address (e.g., 'https://onrender.com')
-            const backendApiUrl = 'https://mailtree.vercel.app/send';
+            // Pointing to your specific live Vercel production domain
+            const backendApiUrl = 'https://vercel.app';
 
-            // Send the request to your Express server
             fetch(backendApiUrl, {
                 method: 'POST',
+                mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // Sending an empty body because the server reads the domain from headers
-                body: JSON.stringify({}) 
+                // Pass the message payload down to the server
+                body: JSON.stringify({ message: messageInput }) 
             })
             .then(async (response) => {
                 const data = await response.json();
@@ -48,13 +50,13 @@
                     responseBox.textContent = data.message;
                 } else {
                     responseBox.style.color = 'red';
-                    responseBox.textContent = data.error || 'Authorization failed.';
+                    responseBox.textContent = data.error || 'Authorization / Delivery failed.';
                 }
             })
             .catch((error) => {
                 console.error('Fetch Error:', error);
                 responseBox.style.color = 'red';
-                responseBox.textContent = 'Could not connect to the backend server.';
+                responseBox.textContent = 'Could not connect to Mailtree server.';
             });
         });
     </script>
